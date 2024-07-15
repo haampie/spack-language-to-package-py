@@ -1,19 +1,19 @@
-from typing import List
 import ast
 import itertools
 import os
+import sys
+import tarfile
+import urllib.parse
+from typing import List
+
 import spack.fetch_strategy
 import spack.mirror
 import spack.package_base
 import spack.repo
 import spack.spec
 import spack.stage
-import spack.util.executable
-import sys
-import tarfile
-import urllib.parse
 import spack.util.crypto
-
+import spack.util.executable
 
 C_EXT = {".c"}
 CXX_EXT = {".cpp", ".cc", ".cxx", ".c++"}
@@ -27,12 +27,13 @@ DOWNLOAD_DIR = "downloads"
 CURL = spack.util.executable.Executable("curl")
 CURL.add_default_arg("--remove-on-error", "-Lk", "--parallel")
 
+
 def iter_tarfile(p):
     try:
         tar = tarfile.open(p)
     except tarfile.ReadError:
         return False
-    
+
     try:
         while tar.next() is not None:
             pass
@@ -46,15 +47,17 @@ def iter_tarfile(p):
 
         yield member.name
 
+
 def iter_zipfile(p):
     import re
+
     # look for local file headers
     with open(p, "rb") as f:
         contents = f.read()
 
     if not contents.startswith(b"PK"):
         return False
-    
+
     for entry in re.finditer(b"\x50\x4b\x03\x04", contents):
         start = entry.start()
         end = start + 30
@@ -68,9 +71,10 @@ def iter_zipfile(p):
             continue
 
         try:
-            yield contents[end:end+path_len].decode("utf-8")
+            yield contents[end : end + path_len].decode("utf-8")
         except UnicodeDecodeError:
             continue
+
 
 class LocateDependsOnStatement(ast.NodeVisitor):
     def __init__(self, pkgclass: str) -> None:
@@ -89,7 +93,7 @@ class LocateDependsOnStatement(ast.NodeVisitor):
 
             super().generic_visit(node)
             return
-        
+
         else:
             # look for version(...) function call
             if isinstance(node, ast.Call):
@@ -101,6 +105,7 @@ class LocateDependsOnStatement(ast.NodeVisitor):
                 self.stack.append(node)
                 super().generic_visit(node)
                 self.stack.pop()
+
 
 packages = (pkg for pkg in spack.repo.PATH.all_package_classes() if pkg.has_code and pkg.versions)
 
@@ -180,7 +185,7 @@ for batch in itertools.batched(packages, BATCH_SIZE):
 
         if not languages:
             continue
-        
+
         DIGEST_TO_LANGS[archive.name] = languages
 
     # Update packages
@@ -199,7 +204,7 @@ for batch in itertools.batched(packages, BATCH_SIZE):
 
         if languages is None:
             continue
-        
+
         pkg_file = spack.repo.PATH.filename_for_package_name(pkg_cls.name)
 
         with open(pkg_file, "r+") as f:
@@ -215,11 +220,11 @@ for batch in itertools.batched(packages, BATCH_SIZE):
 
             location = visitor.last_version_stack[0].end_lineno
 
-            lines = contents.split('\n')
+            lines = contents.split("\n")
 
             langauge_statements = [
                 "",
-                *(f'    depends_on("{lang}", type="build")  # generated' for lang in languages)
+                *(f'    depends_on("{lang}", type="build")  # generated' for lang in languages),
             ]
 
             lines = lines[:location] + langauge_statements + lines[location:]
