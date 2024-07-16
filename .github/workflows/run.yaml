@@ -12,26 +12,20 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - name: configure git
-      run: |
-        git config --global user.email "example@example.com"
-        git config --global user.name "Example"
-    - name: checkout spack
-      uses: actions/checkout@v4
-      with:
-        repository: spack/spack
-        ref: develop
-        path: spack
     - name: set up python
       uses: actions/setup-python@v5
       with:
         python-version: "3.12"
+    - name: configure git
+      run: |
+        git config --global user.email "example@example.com"
+        git config --global user.name "Example"
+        git checkout -b languages
     - run: |
         . spack/share/spack/setup-env.sh
-        spack-python update_languages.py zstd
+        spack-python update_languages.py zig
     - run: |
-        git checkout -b languages
-        git -C spack format-patch -1
-        git add .
+        git -C spack diff > language.patch
+        git add language.patch
         git commit -m "language patch"
         git push -f origin languages
