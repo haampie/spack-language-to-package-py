@@ -25,7 +25,7 @@ jobs:
     - name: set up python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.11"
+        python-version: "3.12"
     - run: |
         . spack/share/spack/setup-env.sh
         spack-python update_languages.py zstd
