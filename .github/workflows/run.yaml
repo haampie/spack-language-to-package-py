@@ -12,20 +12,22 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - name: setup git
+    - name: configure git
       run: |
         git config --global user.email "example@example.com"
         git config --global user.name "Example"
-        git remote add upstream https://github.com/spack/spack.git
-        git fetch upstream
-        git checkout -b spack upstream/develop
+    - name: checkout spack
+      uses: actions/checkout@v4
+      with:
+        repository: spack/spack
+        ref: develop
+        path: spack
     - run: |
-        echo "Hello, world!" > languages.txt
-        git add languages.txt
-        git commit -m "Add languages.txt"
+        . spack/share/spack/setup-env.sh
+        spack-python update_languages.py zstd
     - run: |
-        git checkout -b languages origin/master
-        git format-patch -1 spack
+        git checkout -b languages
+        git -C spack format-patch -1
         git add .
         git commit -m "language patch"
         git push -f origin languages
