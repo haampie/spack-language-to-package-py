@@ -25,7 +25,7 @@ jobs:
         git checkout -b languages
     - run: |
         . spack/share/spack/setup-env.sh
-        spack-python update_languages.py zig
+        spack-python update_languages.py
     - run: |
         git -C spack diff > language.patch
         git add language.patch
