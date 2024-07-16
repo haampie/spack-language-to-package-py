@@ -18,10 +18,14 @@ jobs:
         git config --global user.name "Example"
         git remote add upstream https://github.com/spack/spack.git
         git fetch upstream
-        git checkout -b languages upstream/develop
+        git checkout -b spack upstream/develop
     - run: |
         echo "Hello, world!" > languages.txt
         git add languages.txt
         git commit -m "Add languages.txt"
-        git push origin -f languages
-
+    - run: |
+        git checkout -b languages
+        git format-patch -1 spack
+        git add .
+        git commit -m "language patch"
+        git push -f origin languages
