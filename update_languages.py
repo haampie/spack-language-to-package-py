@@ -16,8 +16,38 @@ import spack.util.crypto
 import spack.util.executable
 
 C_EXT = {".c"}
-CXX_EXT = {".cpp", ".cc", ".cxx", ".c++"}
-FORTRAN_EXT = {".f", ".f77", ".f90", ".f95", ".f03", ".f08"}
+CXX_EXT = {
+    ".C",
+    ".c++",
+    ".cc",
+    ".ccm",
+    ".cpp",
+    ".CPP",
+    ".cxx",
+    ".h++",
+    ".hh",
+    ".hpp",
+    ".hxx",
+    ".inl",
+    ".ipp",
+    ".ixx",
+    ".tcc",
+    ".tpp",
+}
+FORTRAN_EXT = {
+    ".f77",
+    ".F77",
+    ".f90",
+    ".F90",
+    ".f95",
+    ".F95",
+    ".f",
+    ".F",
+    ".for",
+    ".FOR",
+    ".ftn",
+    ".FTN",
+}
 
 DOWNLOADED_DIGESTS = set()
 DIGEST_TO_LANGS = {}
@@ -167,7 +197,6 @@ def run(packages):
             for path in iter:
                 print(f"{archive.path}:{path}")
                 _, ext = os.path.splitext(path)
-                ext = ext.lower()
                 if ext in C_EXT:
                     c = True
                 elif ext in CXX_EXT:
