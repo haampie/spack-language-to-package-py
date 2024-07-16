@@ -1,0 +1,18 @@
+name: languages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  languages:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - run: |
+        git checkout -b languages
+        echo "Hello, world!" > languages.txt
+        git add languages.txt
+        git commit -m "Add languages.txt"
+        git push origin languages
+
