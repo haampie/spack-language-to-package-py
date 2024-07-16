@@ -3,6 +3,9 @@ name: languages
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   languages:
     runs-on: ubuntu-latest
@@ -16,5 +19,5 @@ jobs:
         echo "Hello, world!" > languages.txt
         git add languages.txt
         git commit -m "Add languages.txt"
-        git push origin languages
+        git push origin -f languages
 
