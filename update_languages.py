@@ -51,7 +51,7 @@ FORTRAN_EXT = {
 
 DOWNLOADED_DIGESTS = set()
 DIGEST_TO_LANGS = {}
-BATCH_SIZE = 100
+BATCH_SIZE = 200
 DOWNLOAD_DIR = "downloads"
 
 CURL = spack.util.executable.Executable("curl")
