@@ -195,14 +195,16 @@ def run(packages):
                 continue
 
             for path in iter:
-                print(f"{archive.path}:{path}")
                 _, ext = os.path.splitext(path)
-                if ext in C_EXT:
+                if not c and ext in C_EXT:
                     c = True
-                elif ext in CXX_EXT:
+                elif not cxx and ext in CXX_EXT:
                     cxx = True
-                elif ext in FORTRAN_EXT:
+                elif not fortran and ext in FORTRAN_EXT:
                     fortran = True
+
+                if c and cxx and fortran:
+                    break
 
             languages = []
             if c:
