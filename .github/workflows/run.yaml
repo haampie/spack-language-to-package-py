@@ -12,10 +12,14 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - run: |
+    - name: setup git
+      run: |
         git config --global user.email "example@example.com"
         git config --global user.name "Example"
-        git checkout -b languages
+        git remote add upstream https://github.com/spack/spack.git
+        git fetch upstream
+        git checkout -b languages upstream/develop
+    - run: |
         echo "Hello, world!" > languages.txt
         git add languages.txt
         git commit -m "Add languages.txt"
